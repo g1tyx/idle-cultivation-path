@@ -125,6 +125,14 @@
             display: block;
         }
 
+        .stats-tab-content {
+            display: none;
+        }
+
+        .stats-tab-content.active {
+            display: block;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -137,6 +145,14 @@
             border-radius: 8px;
             padding: 15px;
             border-left: 4px solid #ffd700;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card[style*="cursor: pointer"]:hover {
+            background: rgba(78, 205, 196, 0.2);
+            border-left-color: #4ecdc4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
         }
 
         .stat-name {
@@ -959,6 +975,18 @@
             ⚡⚡⚡
             <span class="tooltip">1000x Speed</span>
         </button>
+        <button class="sidepanel-btn" id="speed10000Btn" onclick="setSpeed(10000)">
+            🔥
+            <span class="tooltip">10,000x Speed</span>
+        </button>
+        <button class="sidepanel-btn" id="speed100000Btn" onclick="setSpeed(100000)">
+            🔥🔥
+            <span class="tooltip">100,000x Speed</span>
+        </button>
+        <button class="sidepanel-btn" id="speed1000000Btn" onclick="setSpeed(1000000)">
+            🔥🔥🔥
+            <span class="tooltip">1,000,000x Speed</span>
+        </button>
 
         <div class="sidepanel-divider"></div>
 
@@ -1015,116 +1043,212 @@
             <button class="tab" onclick="switchTab('combat')">Combat</button>
             <button class="tab" id="soulShopTab" onclick="switchTab('soulShop')" style="display: none;">Soul Shop</button>
             <button class="tab" id="bloodlineTab" onclick="switchTab('bloodline')" style="display: none;">Bloodline</button>
+            <button class="tab" id="bodyRefinementTab" onclick="switchTab('bodyRefinement')" style="display: none;">Body Refining</button>
+            <button class="tab" id="bossesTab" onclick="switchTab('bosses')" style="display: none;">Bosses</button>
         </div>
 
         <div id="stats" class="tab-content active">
-            <div class="proficiencies">
-                <div class="prof-title">Cultivation Realm</div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-name">Realm</div>
-                        <div class="stat-value" id="realmName">QI CONDENSATION</div>
+            <!-- Sub-tabs for Stats -->
+            <div class="tabs" style="margin-bottom: 15px;">
+                <button class="tab active" onclick="switchStatsTab('cultivation')">Cultivation</button>
+                <button class="tab" onclick="switchStatsTab('character')">Attributes</button>
+                <button class="tab" id="statsRebirthTab" onclick="switchStatsTab('rebirth')" style="display: none;">Rebirth</button>
+            </div>
+
+            <!-- Cultivation Tab -->
+            <div id="stats-cultivation" class="stats-tab-content active">
+                <div class="proficiencies">
+                    <div class="prof-title">Cultivation Realm</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-name">Realm</div>
+                            <div class="stat-value" id="realmName">QI CONDENSATION</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Stage</div>
+                            <div class="stat-value" id="realmStage">1</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Qi</div>
+                            <div class="stat-value" id="statQi">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Next Requirement</div>
+                            <div class="stat-value" id="realmNextReq">10</div>
+                        </div>
+                        <div class="stat-card" style="cursor: pointer;" onclick="openQiBreakdownModal()">
+                            <div class="stat-name">QI/Day</div>
+                            <div class="stat-value" id="statQiPerDay">0</div>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-name">Stage</div>
-                        <div class="stat-value" id="realmStage">1</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-name">Next Requirement</div>
-                        <div class="stat-value" id="realmNextReq">10</div>
+                </div>
+
+                <!-- Others Sub-section -->
+                <div class="proficiencies" style="margin-top: 15px;">
+                    <div class="prof-title">Others</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-name">Total Years Lived</div>
+                            <div class="stat-value" id="totalYearsLived">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Highest Life</div>
+                            <div class="stat-value" id="highestLifeYears">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Current Life</div>
+                            <div class="stat-value" id="currentLifeYears">0</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-name">Qi</div>
-                    <div class="stat-value" id="statQi">0</div>
+            <!-- Attributes Tab -->
+            <div id="stats-character" class="stats-tab-content">
+                <div class="proficiencies">
+                    <div class="prof-title">Attributes</div>
+                    <div class="stats-grid">
+                        <div class="stat-card" style="cursor: pointer;" onclick="openHPBreakdownModal()">
+                            <div class="stat-name">HP</div>
+                            <div class="stat-value" id="statHp">100</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Spirit Stones</div>
+                            <div class="stat-value" id="statSpiritStones">0</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-name">HP</div>
-                    <div class="stat-value" id="statHp">100</div>
+
+                <!-- Defense Sub-section -->
+                <div class="proficiencies" style="margin-top: 15px;">
+                    <div class="prof-title">Defense Stats</div>
+                    <div class="stats-grid">
+                        <div class="stat-card" style="cursor: pointer;" onclick="openDefenseBreakdownModal()">
+                            <div class="stat-name">Defense</div>
+                            <div class="stat-value" id="statDef">10</div>
+                        </div>
+                        <!-- Elemental Resistance Cards -->
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #FF4500;">Fire Resistance</div>
+                            <div class="stat-value" id="statFireResistance" style="color: #FF4500;">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #1E90FF;">Water Resistance</div>
+                            <div class="stat-value" id="statWaterResistance" style="color: #1E90FF;">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #228B22;">Wood Resistance</div>
+                            <div class="stat-value" id="statWoodResistance" style="color: #228B22;">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #C0C0C0;">Metal Resistance</div>
+                            <div class="stat-value" id="statMetalResistance" style="color: #C0C0C0;">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #8B4513;">Earth Resistance</div>
+                            <div class="stat-value" id="statEarthResistance" style="color: #8B4513;">0</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-name">Defense</div>
-                    <div class="stat-value" id="statDef">10</div>
+
+                <!-- Damage Sub-section -->
+                <div class="proficiencies" style="margin-top: 15px;">
+                    <div class="prof-title">Damage Stats</div>
+                    <div class="stats-grid">
+                        <div class="stat-card" style="cursor: pointer;" onclick="openDamageBreakdownModal()">
+                            <div class="stat-name">Physical Damage</div>
+                            <div class="stat-value" id="statDamage">1</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Crit Chance</div>
+                            <div class="stat-value" id="statCritChance">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Crit Damage</div>
+                            <div class="stat-value" id="statCritDamage">2.0x</div>
+                        </div>
+                        <!-- Elemental Damage Cards -->
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #FF4500;">Fire Damage</div>
+                            <div class="stat-value" id="statFireDamage" style="color: #FF4500;">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #1E90FF;">Water Damage</div>
+                            <div class="stat-value" id="statWaterDamage" style="color: #1E90FF;">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #228B22;">Wood Damage</div>
+                            <div class="stat-value" id="statWoodDamage" style="color: #228B22;">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #C0C0C0;">Metal Damage</div>
+                            <div class="stat-value" id="statMetalDamage" style="color: #C0C0C0;">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name" style="color: #8B4513;">Earth Damage</div>
+                            <div class="stat-value" id="statEarthDamage" style="color: #8B4513;">0</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card" style="cursor: pointer;" onclick="openDamageBreakdownModal()">
-                    <div class="stat-name">Damage</div>
-                    <div class="stat-value" id="statDamage">1</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-name">Crit Chance</div>
-                    <div class="stat-value" id="statCritChance">0%</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-name">Crit Damage</div>
-                    <div class="stat-value" id="statCritDamage">2.0x</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-name">Spirit Stones</div>
-                    <div class="stat-value" id="statSpiritStones">0</div>
-                </div>
-                <div class="stat-card" style="cursor: pointer;" onclick="openQiBreakdownModal()">
-                    <div class="stat-name">QI/Day</div>
-                    <div class="stat-value" id="statQiPerDay">0</div>
+
+                <!-- Weapon Proficiencies Sub-section -->
+                <div class="proficiencies" id="proficienciesSection" style="margin-top: 15px;">
+                    <div class="prof-title">Weapon Proficiencies</div>
+                    <div class="stats-grid">
+                        <div class="stat-card" id="profSwordCard">
+                            <div class="stat-name">Sword</div>
+                            <div class="stat-value" id="profSword">0%</div>
+                        </div>
+                        <div class="stat-card" id="profSpearCard">
+                            <div class="stat-name">Spear</div>
+                            <div class="stat-value" id="profSpear">0%</div>
+                        </div>
+                        <div class="stat-card" id="profFistCard">
+                            <div class="stat-name">Fist</div>
+                            <div class="stat-value" id="profFist">0%</div>
+                        </div>
+                        <div class="stat-card" id="profPalmCard">
+                            <div class="stat-name">Palm</div>
+                            <div class="stat-value" id="profPalm">0%</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Rebirth button always visible -->
-            <button class="action-btn" id="rebirthBtn" onclick="performRebirth()" style="margin-top: 15px; background: #ff6b6b; border-color: #ff6b6b;">Rebirth</button>
-
-            <!-- Rebirth stats hidden until first rebirth -->
-            <div class="proficiencies" id="rebirthSection">
-                <div class="prof-title">Rebirth Info</div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-name">Rebirth Count</div>
-                        <div class="stat-value" id="rebirthCount">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-name">Current Soul Power</div>
-                        <div class="stat-value" id="soulPower">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-name">Total Soul Power</div>
-                        <div class="stat-value" id="totalSoulPower">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-name">Highest Monster</div>
-                        <div class="stat-value" id="highestMonster">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-name">Next Rebirth</div>
-                        <div class="stat-value" id="nextRebirthSP">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-name">Talent</div>
-                        <div class="stat-value" id="talentRarity">Common</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="proficiencies" id="proficienciesSection">
-                <div class="prof-title">Weapon Proficiencies</div>
-                <div class="stats-grid">
-                    <div class="stat-card" id="profSwordCard">
-                        <div class="stat-name">Sword</div>
-                        <div class="stat-value" id="profSword">0%</div>
-                    </div>
-                    <div class="stat-card" id="profSpearCard">
-                        <div class="stat-name">Spear</div>
-                        <div class="stat-value" id="profSpear">0%</div>
-                    </div>
-                    <div class="stat-card" id="profFistCard">
-                        <div class="stat-name">Fist</div>
-                        <div class="stat-value" id="profFist">0%</div>
-                    </div>
-                    <div class="stat-card" id="profPalmCard">
-                        <div class="stat-name">Palm</div>
-                        <div class="stat-value" id="profPalm">0%</div>
+            <!-- Rebirth Sub-Tab -->
+            <div id="stats-rebirth" class="stats-tab-content">
+                <div class="proficiencies">
+                    <div class="prof-title">Rebirth Info</div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-name">Rebirth Count</div>
+                            <div class="stat-value" id="rebirthCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Current Soul Power</div>
+                            <div class="stat-value" id="soulPower">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Total Soul Power</div>
+                            <div class="stat-value" id="totalSoulPower">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Highest Monster</div>
+                            <div class="stat-value" id="highestMonster">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Soul Power in Next Rebirth</div>
+                            <div class="stat-value" id="nextRebirthSP">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-name">Talent</div>
+                            <div class="stat-value" id="talentRarity">Common</div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Rebirth button -->
+                <button class="action-btn" id="rebirthBtn" onclick="performRebirth()" style="margin-top: 15px; background: #ff6b6b; border-color: #ff6b6b;">Rebirth</button>
             </div>
         </div>
 
@@ -1138,39 +1262,39 @@
 
                 <div class="action-card" id="action-qiRefining">
                     <div class="action-title">QI Refining</div>
-                    <div class="action-description">Refine QI energy into HP. Useful when at bottleneck to strengthen your body.</div>
-                    <div style="margin: 10px 0; color: #bbb; font-size: 0.9em;">
-                        <div>Converts potential QI gain into HP (2% base rate, scales with Battle Manual)</div>
-                    </div>
+                    <div class="action-description">Refine your current QI into HP</div>
                     <button class="action-btn" onclick="toggleAction('qiRefining')">Start Refining</button>
                 </div>
 
                 <div class="action-card" id="action-trainWeapon">
                     <div class="action-title">Train Weapon</div>
                     <div class="action-description">Practice with your equipped weapon to increase proficiency.</div>
+                    <div style="margin: 10px 0; color: #bbb; font-size: 0.9em;">
+                        <div>Weapon: <span id="trainWeaponName" style="color: #4ecdc4;">None</span></div>
+                        <div>Rarity: <span id="trainWeaponRarity" style="color: #fff;">-</span></div>
+                        <div>Proficiency: <span id="trainWeaponProf" style="color: #ffd700;">0.0%</span></div>
+                    </div>
                     <button class="action-btn" onclick="toggleAction('trainWeapon')">Start Practice</button>
                 </div>
 
                 <div class="action-card" id="action-refineWeapon">
                     <div class="action-title">Refine Weapon</div>
                     <div class="action-description">Use QI and Spirit Stones to permanently increase your weapon's damage.</div>
-                    <div style="margin: 10px 0; color: #bbb; font-size: 0.9em;">
-                        <div>Cost per day: 10 QI + 20 Spirit Stones</div>
-                    </div>
                     <button class="action-btn" onclick="toggleAction('refineWeapon')">Start Refining</button>
                 </div>
 
-                <div class="action-card" id="action-refineBody">
-                    <div class="action-title">Refine Body</div>
-                    <div class="action-description">Refine your body to increase its rarity and power.</div>
+                <!-- Body refinement removed - will be reworked -->
+
+                <div class="action-card" id="action-strengthenBloodline" style="display: none;">
+                    <div class="action-title">Strengthen Bloodline</div>
+                    <div class="action-description">Meditate to strengthen your bloodline and earn bloodline nodes.</div>
                     <div style="margin: 10px 0; color: #bbb; font-size: 0.9em;">
-                        <div>Current Rarity: <span id="bodyRarity" style="color: #ffffff;">COMMON</span></div>
-                        <div>Progress: <span id="bodyProgress">0.0</span> / <span id="bodyRequired">100</span></div>
+                        <div>Progress: <span id="strengthenProgress">0.0</span>%</div>
                         <div class="sidepanel-progress" style="width: 100%; margin: 10px 0;">
-                            <div class="sidepanel-progress-bar" id="bodyProgressBar" style="width: 0%;"></div>
+                            <div id="strengthenProgressBar" class="sidepanel-progress-bar" style="width: 0%;"></div>
                         </div>
                     </div>
-                    <button class="action-btn" onclick="toggleAction('refineBody')">Start Refining</button>
+                    <button class="action-btn" onclick="toggleAction('strengthenBloodline')">Start Strengthening</button>
                 </div>
 
                 <div class="action-card" id="action-breakthrough">
@@ -1181,19 +1305,6 @@
                         <div style="margin-top: 5px; color: #ffd700;">Recommended Power Level: <span id="recommendedPowerLevel">0</span></div>
                     </div>
                     <button class="action-btn" onclick="openBreakthroughBattleModal()">Attempt Breakthrough</button>
-                </div>
-
-                <div class="action-card" id="action-secretMaster">
-                    <div class="action-title">Talk to Secret Master</div>
-                    <div class="action-description">Learn from the Secret Master to improve technique drop rates.</div>
-                    <div style="margin: 10px 0; color: #bbb; font-size: 0.9em;">
-                        <div>Current Tier: <span id="secretMasterTier" style="color: #a335ee;">EPIC</span></div>
-                        <div>Progress: <span id="secretMasterProgress">0.0</span>% (10 years to max)</div>
-                        <div class="sidepanel-progress" style="width: 100%; margin: 10px 0;">
-                            <div class="sidepanel-progress-bar" id="secretMasterProgressBar" style="width: 0%;"></div>
-                        </div>
-                    </div>
-                    <button class="action-btn" onclick="toggleAction('secretMaster')">Talk to Master</button>
                 </div>
             </div>
         </div>
@@ -1230,59 +1341,6 @@
                 </div>
             </div>
 
-            <div class="prof-title" style="margin-top: 30px;" id="autoRollSection">Auto Roll</div>
-            <div style="margin: 20px 0;" id="autoRollContainer">
-                <div class="action-card" id="autoRollCard">
-                    <div class="action-title">Auto Roll Technique Manuals</div>
-                    <div class="action-description" style="margin-bottom: 15px;">Automatically buy manuals until you get the desired rarity</div>
-
-                    <div style="margin: 15px 0;">
-                        <label style="color: #4ecdc4; font-weight: bold; margin-bottom: 5px; display: block;">Weapon Type:</label>
-                        <select id="autoRollWeapon" style="width: 100%; padding: 8px; background: #16213e; color: #fff; border: 1px solid #4ecdc4; border-radius: 5px; font-size: 1em;">
-                            <option value="sword">Sword</option>
-                            <option value="spear">Spear</option>
-                            <option value="fist">Fist</option>
-                            <option value="palm">Palm</option>
-                        </select>
-                    </div>
-
-                    <div style="margin: 15px 0;">
-                        <label style="color: #4ecdc4; font-weight: bold; margin-bottom: 5px; display: block;">Target Rarity:</label>
-                        <select id="autoRollRarity" style="width: 100%; padding: 8px; background: #16213e; color: #fff; border: 1px solid #4ecdc4; border-radius: 5px; font-size: 1em;">
-                            <option value="uncommon">Uncommon</option>
-                            <option value="rare">Rare</option>
-                            <option value="epic" selected>Epic</option>
-                            <option value="legendary">Legendary</option>
-                            <option value="mythical">Mythical</option>
-                            <option value="ancient">Ancient</option>
-                            <option value="divine">Divine</option>
-                            <option value="celestial">Celestial</option>
-                            <option value="transcendental">Transcendental</option>
-                        </select>
-                    </div>
-
-                    <button class="action-btn" id="autoRollToggle" onclick="toggleAutoRoll()">Start Auto Roll</button>
-                    <div id="autoRollStatus" style="margin-top: 10px; color: #4ecdc4; font-size: 0.9em;"></div>
-                </div>
-            </div>
-
-            <div class="prof-title" style="margin-top: 30px;">Techniques</div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
-                <div class="action-card">
-                    <div class="action-title">Slot 1</div>
-                    <div id="equippedTech0" style="margin: 10px 0; color: #bbb; font-size: 0.9em;">Empty</div>
-                    <button class="action-btn" id="unequipBtn0" onclick="unequipTechnique(0)" disabled>Unequip</button>
-                </div>
-                <div class="action-card">
-                    <div class="action-title">Slot 2</div>
-                    <div id="equippedTech1" style="margin: 10px 0; color: #bbb; font-size: 0.9em;">Empty</div>
-                    <button class="action-btn" id="unequipBtn1" onclick="unequipTechnique(1)" disabled>Unequip</button>
-                </div>
-            </div>
-
-            <div id="techniquesList" style="margin-top: 20px;">
-            </div>
         </div>
 
         <div id="combat" class="tab-content">
@@ -1301,20 +1359,6 @@
                         <div class="stat-name">Monster HP</div>
                         <div class="stat-value" id="combatMonsterHp">-</div>
                     </div>
-                </div>
-            </div>
-
-            <div class="prof-title" style="margin-top: 30px;">Active Techniques</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; margin-bottom: 30px;">
-                <div class="action-card" id="combatTech0">
-                    <div class="action-title">Slot 1</div>
-                    <div style="margin: 10px 0; color: #bbb; font-size: 0.9em;">No technique equipped</div>
-                    <button class="action-btn" onclick="toggleTechnique(0)" disabled>Toggle</button>
-                </div>
-                <div class="action-card" id="combatTech1">
-                    <div class="action-title">Slot 2</div>
-                    <div style="margin: 10px 0; color: #bbb; font-size: 0.9em;">No technique equipped</div>
-                    <button class="action-btn" onclick="toggleTechnique(1)" disabled>Toggle</button>
                 </div>
             </div>
 
@@ -1353,6 +1397,21 @@
             <div id="bloodlineTreeView" class="bloodline-view">
                 <!-- Skill Tree Container -->
                 <div id="skillTreeContainer" style="position: relative; width: 100%; height: 600px; background: rgba(0, 0, 0, 0.3); border-radius: 10px; overflow: hidden;">
+                <!-- Element Counter (Top-Left) -->
+                <div id="elementCounterSkillTree" style="position: absolute; top: 10px; left: 10px; z-index: 100; background: rgba(0, 0, 0, 0.8); border: 2px solid #4ecdc4; border-radius: 8px; padding: 10px; min-width: 150px;">
+                    <div style="color: #4ecdc4; font-weight: bold; margin-bottom: 8px; text-align: center; font-size: 0.95em;">Elements</div>
+                    <div id="elementCounterContent" style="font-size: 0.85em;"></div>
+                </div>
+                <!-- Bloodline Techniques Counter (Below Elements) -->
+                <div id="bloodlineTechniquesCounter" style="position: absolute; top: 280px; left: 10px; z-index: 100; background: rgba(0, 0, 0, 0.8); border: 2px solid #4ecdc4; border-radius: 8px; padding: 10px; min-width: 180px; max-width: 220px; height: 40%; overflow-y: auto; display: none;">
+                    <div style="color: #4ecdc4; font-weight: bold; margin-bottom: 8px; text-align: center; font-size: 0.95em;">Bloodline Techniques</div>
+                    <div id="bloodlineTechniquesContent" style="font-size: 0.85em;"></div>
+                </div>
+                <!-- Bloodline Techniques Tooltip (Global) -->
+                <div id="bloodlineTechniquesGlobalTooltip" style="display: none; position: fixed; z-index: 10000; background: rgba(0, 0, 0, 0.95); border: 2px solid #4ecdc4; border-radius: 6px; padding: 10px; min-width: 150px; pointer-events: none;">
+                    <div style="color: #ffd700; font-weight: bold; font-size: 0.9em; margin-bottom: 6px;">Bonuses:</div>
+                    <div id="bloodlineTechniquesGlobalTooltipContent"></div>
+                </div>
                 <!-- Zoom Controls -->
                 <div id="bloodlineControls" style="position: absolute; top: 10px; right: 10px; z-index: 100; display: flex; gap: 5px;">
                     <button onclick="BloodlineTree.zoomIn()" style="width: 35px; height: 35px; background: rgba(78, 205, 196, 0.2); border: 2px solid #4ecdc4; border-radius: 5px; color: #4ecdc4; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s;"
@@ -1381,7 +1440,17 @@
                 <div style="display: flex; gap: 15px; height: 600px;">
                     <!-- Node Palette (Left) -->
                     <div id="blockPalette" style="width: 250px; background: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 15px; overflow-y: auto;">
-                        <div style="color: #ffd700; font-weight: bold; margin-bottom: 15px; text-align: center; font-size: 1.1em;">Node Palette</div>
+                        <div style="color: #ffd700; font-weight: bold; margin-bottom: 10px; text-align: center; font-size: 1.1em;">Node Palette</div>
+
+                        <!-- Filter Dropdown -->
+                        <div style="margin-bottom: 15px;">
+                            <select id="nodeFilterDropdown" onchange="BloodlineBuilder.filterPalette(this.value)" style="width: 100%; padding: 8px; background: rgba(0, 0, 0, 0.5); border: 2px solid #4ecdc4; border-radius: 5px; color: #fff; font-size: 0.9em; cursor: pointer;">
+                                <option value="all">All Nodes</option>
+                                <option value="mastery">Mastery</option>
+                                <option value="elemental">Elemental</option>
+                                <option value="others">Others</option>
+                            </select>
+                        </div>
 
                         <!-- Dynamic content generated by BloodlineBuilder.js -->
                         <div id="blockPaletteContent"></div>
@@ -1423,6 +1492,111 @@
                 </div>
             </div>
         </div>
+
+        <!-- Body Refinement Tab -->
+        <div id="bodyRefinement" class="tab-content">
+            <div class="prof-title" style="text-align: center; margin-bottom: 15px;">Body Refining Treasures</div>
+
+            <!-- Permanent Bonuses Display -->
+            <div style="background: rgba(255, 215, 0, 0.1); border: 2px solid #ffd700; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <div style="color: #ffd700; font-weight: bold; font-size: 1.1em; margin-bottom: 10px; text-align: center;">Permanent Stat Bonuses</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
+                    <div>
+                        <div style="color: #ff6b6b; font-weight: bold;">HP Bonus</div>
+                        <div style="color: #fff; font-size: 1.2em;" id="bodyHpBonus">0</div>
+                    </div>
+                    <div>
+                        <div style="color: #ff9f43; font-weight: bold;">Damage Bonus</div>
+                        <div style="color: #fff; font-size: 1.2em;" id="bodyDamageBonus">0</div>
+                    </div>
+                    <div>
+                        <div style="color: #54a0ff; font-weight: bold;">Defense Bonus</div>
+                        <div style="color: #fff; font-size: 1.2em;" id="bodyDefenseBonus">0</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 10px; color: #bbb; font-size: 0.85em;">
+                    Risk Level: <span id="bodyConsumedCount" style="color: #ff6b6b;">0</span> treasures consumed this life
+                </div>
+            </div>
+
+            <!-- Currently Consuming Treasure -->
+            <div id="activeRefiningSection" style="display: none; background: rgba(78, 205, 196, 0.1); border: 2px solid #4ecdc4; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <div style="color: #4ecdc4; font-weight: bold; font-size: 1.1em; margin-bottom: 10px;">Currently Refining</div>
+                <div id="activeTreasureInfo"></div>
+                <div style="margin: 10px 0;">
+                    <div style="margin-bottom: 5px; display: flex; justify-content: space-between;">
+                        <span>Progress:</span>
+                        <span id="activeTreasureProgress">0%</span>
+                    </div>
+                    <div class="sidepanel-progress" style="width: 100%; height: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden;">
+                        <div id="activeTreasureProgressBar" class="sidepanel-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #4ecdc4, #44a8ac); transition: width 0.3s;"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 10px; color: #ff6b6b; font-size: 0.9em;">
+                    <div>HP Cost: <span id="activeFlatCost">0</span></div>
+                </div>
+                <button onclick="BodyRefinement.stopConsuming()" style="width: 100%; margin-top: 10px; padding: 10px; background: rgba(255, 107, 107, 0.2); border: 2px solid #ff6b6b; border-radius: 5px; color: #ff6b6b; cursor: pointer; font-weight: bold;">
+                    Stop Refining
+                </button>
+            </div>
+
+            <!-- Treasure Inventory -->
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div style="color: #4ecdc4; font-weight: bold; font-size: 1.1em;">Treasure Inventory</div>
+                    <button class="action-btn" onclick="BodyRefinement.refineAll()" style="padding: 8px 20px;">
+                        Refine All
+                    </button>
+                </div>
+                <div id="treasureInventory" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
+                    <!-- Treasures will be dynamically added here -->
+                </div>
+                <div id="noTreasuresMessage" style="text-align: center; color: #888; padding: 30px; display: none;">
+                    No treasures in inventory. Treasures can be acquired through various means.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bosses Tab -->
+        <div id="bosses" class="tab-content">
+            <div class="prof-title" style="text-align: center; margin-bottom: 15px;">Elemental Bosses</div>
+
+            <!-- Boss Combat Info (shown when in combat) -->
+            <div id="bossCombatSection" style="display: none; background: rgba(255, 107, 107, 0.1); border: 2px solid #ff6b6b; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <div style="color: #ff6b6b; font-weight: bold; font-size: 1.1em; margin-bottom: 10px;">Boss Combat</div>
+                <div id="bossCombatInfo" style="margin-bottom: 10px;"></div>
+                <div style="margin: 10px 0;">
+                    <div style="margin-bottom: 5px; display: flex; justify-content: space-between;">
+                        <span>Boss HP:</span>
+                        <span id="bossHpText">0 / 0</span>
+                    </div>
+                    <div class="sidepanel-progress" style="width: 100%; height: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden;">
+                        <div id="bossHpBar" class="sidepanel-progress-fill" style="width: 100%; height: 100%; background: linear-gradient(90deg, #ff6b6b, #ee5a6f); transition: width 0.3s;"></div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <div style="margin-bottom: 5px; display: flex; justify-content: space-between;">
+                        <span>Your HP:</span>
+                        <span id="bossPlayerHpText">0 / 0</span>
+                    </div>
+                    <div class="sidepanel-progress" style="width: 100%; height: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden;">
+                        <div id="bossPlayerHpBar" class="sidepanel-progress-fill" style="width: 100%; height: 100%; background: linear-gradient(90deg, #4ecdc4, #44a3a3); transition: width 0.3s;"></div>
+                    </div>
+                </div>
+                <button onclick="Boss.stopBossCombat()" style="width: 100%; margin-top: 10px; padding: 10px; background: rgba(255, 107, 107, 0.2); border: 2px solid #ff6b6b; border-radius: 5px; color: #ff6b6b; cursor: pointer; font-weight: bold;">
+                    Retreat
+                </button>
+            </div>
+
+            <!-- Boss List -->
+            <div style="margin-bottom: 15px;">
+                <div style="color: #ffd700; font-weight: bold; font-size: 1.1em; margin-bottom: 10px;">Available Bosses</div>
+                <div id="bossList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                    <!-- Bosses will be dynamically added here -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="message-container" id="messageContainer"></div>
@@ -1432,13 +1606,14 @@
 
     <!-- Game Constants (must be loaded first) -->
     <script src="js/constants.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/speedManager.js"></script>
 
     <script src="js/stats.js"></script>
     <script src="js/gameState.js"></script>
     <script src="js/inventory.js"></script>
     <script src="js/ui/modal.js"></script>
     <script src="js/ui.js"></script>
-    <script src="js/techniques.js"></script>
     <script src="js/armor.js"></script>
     <script src="js/combat.js"></script>
     <script src="js/breakthroughBattle.js"></script>
@@ -1448,6 +1623,9 @@
     <script src="js/bloodline.js"></script>
     <script src="js/ui/bloodlineTree.js"></script>
     <script src="js/ui/bloodlineBuilder.js"></script>
+    <script src="js/bloodlineTechniques.js"></script>
+    <script src="js/bodyRefinement.js"></script>
+    <script src="js/boss.js"></script>
 
     <style>
         /* Bloodline Builder Styles */
@@ -1471,7 +1649,7 @@
     </style>
 
     <script src="js/game.js"></script>
-    <!-- <script src="js/debug.js"></script> -->
+    <script src="js/debug.js"></script>
     <script src="js/start.js"></script>
 <!--客服 开始-->
 <link rel="stylesheet" href="//g8hh.github.io/static/css/kf.css" type="text/css" media="screen" charset="utf-8">
